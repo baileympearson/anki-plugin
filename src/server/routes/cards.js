@@ -35,8 +35,12 @@ module.exports = app => {
     app.get('/cards', async (req,res) => {
         let cards = await app.models.Card.find();
 
-        cards = cards.sort((a,b) => b.percentage_success - a.percentage_success);
-        res.send({ cards: cards } );
+        if (!req.query || req.query.order === 'success')
+            cards = cards.sort((a,b) => b.percentage_success - a.percentage_success);
+        else
+            cards = cards.sort((a,b) => b.percentage_failure - a.percentage_failure);
+
+        res.send(cards);
     });
 
     /** 

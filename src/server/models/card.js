@@ -12,6 +12,7 @@ let Card = new Schema(
     card_id: {
       type: String,
       required: true,
+      unique: true,
     },
     number_successes: {
       type: Number,

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello world</title>
+
+    <script >
+        const loadCards = async (ordering='failure') => {
+            try {
+                let cards = await (await fetch(`/cards?order=${ordering}`)).json();
+
+                let makeTR = card => {
+                    let total = card.number_failures + card.number_successes;
+                    let percentage = total === 0 ? 'N/A' : card.number_failures / total;
+                    return `
+                        <tr>
+                            <td> ${card.card_id} </td>
+                            <td> ${card.number_successes} </td>
+                            <td> ${card.number_failures} </td>
+                            <td> ${percentage} </td>
+                        </tr>
+                    `
+                };
+
+                let rows = cards
+                    .map(card => makeTR(card))
+                    .reduce((accum, curr) => {
+                        return accum + curr;
+                    },"");
+                let table = `
+                    <table border="1">
+                        <tr>
+                            <th> Card Id </th>
+                            <th> Number of Successes</th>
+                            <th> Number of Failures</th>
+                            <th> Percentage Failure </th>
+                        </tr>
+                        ${rows}
+                    </table>
+                `;
+
+                let div = document.getElementById('mainDiv');
+                div.innerHTML = table;
+            } catch ( err ) {
+                console.log('error' + err);
+            }
+        };
+
+        loadCards();
+
+    </script>
+    <style>
+        #mainDiv {
+            margin: auto;
+            margin-top: 16px;
+            width: 50%;
+        }
+
+        table {
+            width: 100%;
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        td,th {
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div style="margin: auto; margin-top: 100px; width: 50% ">
+        <button onclick="loadCards('failure')">
+            Sort by failure percentage
+        </button>
+        <button onclick="loadCards('success')">
+            Sort by success percentage
+        </button>
+    </div>
+    <div id="mainDiv"></div>
+
+</body>
+</html>

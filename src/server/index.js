@@ -22,8 +22,9 @@ let mongodb = async () => {
 };
 
 let setupServer = async app => {
-    app.engine('pug',require('pug').__express);
+    // app.engine('pug',require('pug').__express);
     app.set('views',__dirname);
+    app.engine('html',require('ejs').renderFile);
     app.use(express.static(path.join(__dirname,"../../public")));
 
     app.use(bodyParser.urlencoded( { extended: true }));
@@ -39,12 +40,12 @@ let setupServer = async app => {
     // require routes
     require('./routes')(app);
 
-    app.get('*',(req,res) => {
-        res.render("base.pug",{});
+    app.get('/home',(req,res) => {
+        res.render("base.html",{});
     });
 
     app.listen(8080,() => {
-	console.log('listening on port 8080');  
+	    console.log('listening on port 8080');
     });
 };
 
