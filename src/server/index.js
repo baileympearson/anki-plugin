@@ -40,7 +40,7 @@ let setupServer = async app => {
     // require routes
     require('./routes')(app);
 
-    app.get('/home',(req,res) => {
+    app.get('*',(req,res) => {
         res.render("base.html",{});
     });
 
