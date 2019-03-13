@@ -16,22 +16,27 @@
             try {
                 let cards = await (await fetch(`/cards?order=${ordering}`)).json();
                 cards = cards.map(card => {
-                    card.total = card.number_failures + card.number_successes
+                    let total = card.number_failures + card.number_successes
+		    card.total = total;
+                    let percentage = card.number_failures / total;
+		    card.percentage = Math.round(percentage * 100);
                     return card;
                 });
 
                 cards = cards.filter(card => card.total > 0);
+	
+		if (ordering === 'success')
+		    cards = cards.sort((a,b) => b.percentage - a.percentage);
+		else
+		    cards = cards.sort((a,b) => a.percentage - b.percentage);
 
                 let makeTR = card => {
-                    // let total = card.number_failures + card.number_successes;
-                    let percentage = card.number_failures / card.total;
-		    percentage = Math.round(percentage * 100);
                     return `
                         <tr>
                             <td> ${card.card_id} </td>
                             <td> ${card.number_successes} </td>
                             <td> ${card.number_failures} </td>
-                            <td> ${percentage}% </td>
+                            <td> ${card.percentage}% </td>
                         </tr>
                     `
                 };
@@ -47,7 +52,7 @@
                             <th> Card Id </th>
                             <th> Number of Successes</th>
                             <th> Number of Failures</th>
-                            <th onclick="toggle()"> Percentage Success </th>
+                            <th onclick="toggle()"> Percentage Failure </th>
                         </tr>
                         ${rows}
                     </table>

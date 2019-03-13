@@ -77,7 +77,7 @@ module.exports = app => {
                 });
             }
 
-            if (req.body.correct)
+            if (req.body.correct === 'True')
                 card.number_successes += 1;
             else
                 card.number_failures += 1;
@@ -87,6 +87,7 @@ module.exports = app => {
             res.sendStatus(204);
         } catch (err) {
             console.log(err);
+	    res.sendStatus(400);
         }
     });
 
