@@ -5,13 +5,26 @@
     <title>Hello world</title>
 
     <script >
+        let ordering = 'failure';
+
+        const toggle = () => {
+            ordering = ordering === 'failure' ? 'success' : 'failure';
+            loadCards(ordering);
+        };
+
         const loadCards = async (ordering='failure') => {
             try {
                 let cards = await (await fetch(`/cards?order=${ordering}`)).json();
+                cards = cards.map(card => {
+                    card.total = card.number_failures + card.number_successes
+                    return card;
+                });
+
+                cards = cards.filter(card => card.total > 0);
 
                 let makeTR = card => {
-                    let total = card.number_failures + card.number_successes;
-                    let percentage = total === 0 ? 0 : card.number_failures / total;
+                    // let total = card.number_failures + card.number_successes;
+                    let percentage = card.number_failures / card.total;
 		    percentage = Math.round(percentage * 100);
                     return `
                         <tr>
@@ -34,7 +47,7 @@
                             <th> Card Id </th>
                             <th> Number of Successes</th>
                             <th> Number of Failures</th>
-                            <th> Percentage Failure </th>
+                            <th onclick="toggle()"> Percentage Success </th>
                         </tr>
                         ${rows}
                     </table>
@@ -47,13 +60,14 @@
             }
         };
 
+
         loadCards();
 
     </script>
     <style>
         #mainDiv {
             margin: auto;
-            margin-top: 16px;
+            margin-top: 100px;
             width: 50%;
         }
 
@@ -69,14 +83,6 @@
     </style>
 </head>
 <body>
-    <div style="margin: auto; margin-top: 100px; width: 50% ">
-        <button onclick="loadCards('failure')">
-            Sort by failure percentage
-        </button>
-        <button onclick="loadCards('success')">
-            Sort by success percentage
-        </button>
-    </div>
     <div id="mainDiv"></div>
 
 </body>
