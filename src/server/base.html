@@ -11,13 +11,14 @@
 
                 let makeTR = card => {
                     let total = card.number_failures + card.number_successes;
-                    let percentage = total === 0 ? 'N/A' : card.number_failures / total;
+                    let percentage = total === 0 ? 0 : card.number_failures / total;
+		    percentage = Math.round(percentage * 100);
                     return `
                         <tr>
                             <td> ${card.card_id} </td>
                             <td> ${card.number_successes} </td>
                             <td> ${card.number_failures} </td>
-                            <td> ${percentage} </td>
+                            <td> ${percentage}% </td>
                         </tr>
                     `
                 };
