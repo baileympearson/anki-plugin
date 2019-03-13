@@ -39,11 +39,13 @@ let setupServer = async app => {
     // require routes
     require('./routes')(app);
 
-    app.get('/home',(req,res) => {
+    app.get('*',(req,res) => {
         res.render("base.pug",{});
     });
 
-    app.listen(8080,() => console.log('listening') );
+    app.listen(8080,() => {
+	console.log('listening on port 8080');  
+    });
 };
 
 setupServer(app);
